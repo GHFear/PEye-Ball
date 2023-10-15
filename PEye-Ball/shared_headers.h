@@ -1,0 +1,11 @@
+#pragma once
+#include <windows.h>
+#include <stdio.h>
+#include <wincrypt.h>
+#include <string>
+#include <iostream>
+#include <winnt.h>
+#include <vector>
+#include "pe_structs.h"
+#include "tools.h"
+#include "print_structs.h"
