@@ -96,7 +96,7 @@ struct SECTION_HEADER {
 
 struct IMPORT_BY_NAME {
     WORD    Hint;
-    CHAR   Name[1];
+    const char*   Name;
 };
 
 
@@ -109,6 +109,10 @@ struct THUNK_DATA64 {
     } u1;
 };
 
+struct Thunk_Collection64 {
+    THUNK_DATA64 thunk_data64;
+    IMPORT_BY_NAME import_by_name;
+};
 
 struct IMPORT_DESCRIPTOR {
     union {
@@ -126,10 +130,12 @@ struct IMPORT_DESCRIPTOR {
 };
 
 
+
 struct PE_DATABASE {
     DOS_HEADER* dos_header = nullptr;
     NT_HEADERS64* nt_headers = nullptr;
     std::vector<SECTION_HEADER*> section_header;
     std::vector<IMPORT_DESCRIPTOR*> import_descriptor;
+    std::vector<std::vector<Thunk_Collection64>> thunk_collection;
 
 };

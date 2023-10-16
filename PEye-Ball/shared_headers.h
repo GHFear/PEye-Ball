@@ -6,6 +6,10 @@
 #include <iostream>
 #include <winnt.h>
 #include <vector>
+#include <map>
 #include "pe_structs.h"
 #include "tools.h"
 #include "print_structs.h"
+#include "print_tools.h"
+#include "program_handlers.h"
+#include "create_database.h"

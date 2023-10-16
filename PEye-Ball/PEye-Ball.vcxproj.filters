@@ -32,5 +32,16 @@
     <ClInclude Include="print_structs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="print_tools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="create_database.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="program_handlers.h">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

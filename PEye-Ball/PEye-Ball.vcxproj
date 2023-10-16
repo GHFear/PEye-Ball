@@ -130,10 +130,15 @@
     <ClCompile Include="PEye-Ball.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="create_database.h" />
     <ClInclude Include="pe_structs.h" />
     <ClInclude Include="print_structs.h" />
+    <ClInclude Include="print_tools.h" />
     <ClInclude Include="shared_headers.h" />
     <ClInclude Include="tools.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="program_handlers.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
