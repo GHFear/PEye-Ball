@@ -174,7 +174,7 @@ bool print_import_descriptors(PE_DATABASE* database, void* exe_base)
 		for (size_t j = 0; j < thunkCollection.size(); j++)
 		{
 			SetConsoleTextAttribute(hConsole, 7);
-			wprintf(L"     *--Function: %d\n");
+			wprintf(L"     *--Function: %d\n", j);
 
 			auto& thunkData = thunkCollection[j].thunk_data64;
 			auto& importByName = thunkCollection[j].import_by_name;
