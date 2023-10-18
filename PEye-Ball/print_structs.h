@@ -151,50 +151,48 @@ bool print_section_headers(PE_DATABASE* database)
 
 bool print_import_descriptors(PE_DATABASE* database, void* exe_base)
 {
-	try
-	{
-		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-		auto rva_offset = get_disk_rva_translation(database);
-		for (int i = 0; i < database->import_descriptor.size() - 1; i++)
-		{
-			auto dll_name_ptr = add_base_offset_rva(exe_base, database->import_descriptor[i]->Name, rva_offset);
-			SetConsoleTextAttribute(hConsole, 12);
-			wprintf(L"--( IMPORT DESCRIPTOR %d )--\n", i);
-			SetConsoleTextAttribute(hConsole, 15);
-			wprintf(L"  *--Characteristics: %08X\n", database->import_descriptor[i]->import_desc_union.Characteristics);
-			wprintf(L"  *--OriginalFirstThunk: %08X\n", database->import_descriptor[i]->import_desc_union.OriginalFirstThunk);
-			wprintf(L"  *--TimeDateStamp: %08X\n", database->import_descriptor[i]->TimeDateStamp);
-			wprintf(L"  *--ForwarderChain: %08X\n", database->import_descriptor[i]->ForwarderChain);
-			  printf("  *--Name: %s\n", (const char*)dll_name_ptr);
-			wprintf(L"  *--FirstThunk: %08X\n", database->import_descriptor[i]->FirstThunk);
-			wprintf(L"  *--Functions:\n");
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	auto rva_offset = get_disk_rva_translation(database);
 
-			for (size_t j = 0; j < database->thunk_collection[i].size(); j++)
-			{
-				SetConsoleTextAttribute(hConsole, 7);
-				wprintf(L"     *--Function: %d\n", j);
-				
-				if ((database->thunk_collection[i][j].thunk_data64.u1.Function & 0x8000000000000000) == 0x8000000000000000) //Is Ordinal
-				{
-					auto thunk_ordinal = database->thunk_collection[i][j].thunk_data64.u1.Ordinal & 0xFFFF;
-					printf("     *--Ordinal: %p\n\n", thunk_ordinal);
-				}
-				else //Is Name
-				{
-					printf("     *--Name: %s\n", database->thunk_collection[i][j].import_by_name.Name);
-					printf("     *--Hint: %04X\n\n", database->thunk_collection[i][j].import_by_name.Hint);
-				}
-				SetConsoleTextAttribute(hConsole, 15);
-			}
-		}
-	}
-	catch (const std::exception& error)
+	for (int i = 0; i < database->import_descriptor.size(); i++)
 	{
-		printf("%s\n", error.what());
-		return false;
+		auto& importDesc = *database->import_descriptor[i];
+		auto& thunkCollection = database->thunk_collection[i];
+		auto dll_name_ptr = add_base_offset_rva(exe_base, importDesc.Name, rva_offset);
+
+		SetConsoleTextAttribute(hConsole, 12);
+		wprintf(L"--( IMPORT DESCRIPTOR %d )--\n", i);
+		SetConsoleTextAttribute(hConsole, 15);
+		wprintf(L"  *--Characteristics: %08X\n", importDesc.import_desc_union.Characteristics);
+		wprintf(L"  *--OriginalFirstThunk: %08X\n", importDesc.import_desc_union.OriginalFirstThunk);
+		wprintf(L"  *--TimeDateStamp: %08X\n", importDesc.TimeDateStamp);
+		wprintf(L"  *--ForwarderChain: %08X\n", importDesc.ForwarderChain);
+		printf("  *--Name: %s\n", (const char*)dll_name_ptr);
+		wprintf(L"  *--FirstThunk: %08X\n", importDesc.FirstThunk);
+		wprintf(L"  *--Functions:\n");
+
+		for (size_t j = 0; j < thunkCollection.size(); j++)
+		{
+			SetConsoleTextAttribute(hConsole, 7);
+			wprintf(L"     *--Function: %d\n");
+
+			auto& thunkData = thunkCollection[j].thunk_data64;
+			auto& importByName = thunkCollection[j].import_by_name;
+
+			if ((thunkData.u1.Function & 0x8000000000000000) == 0x8000000000000000) //Is Ordinal
+			{
+				auto thunk_ordinal = thunkData.u1.Ordinal & 0xFFFF;
+				printf("     *--Ordinal: %p\n\n", thunk_ordinal);
+			}
+			else //Is Name
+			{
+				printf("     *--Name: %s\n", importByName.Name);
+				printf("     *--Hint: %04X\n\n", importByName.Hint);
+			}
+			SetConsoleTextAttribute(hConsole, 15);
+		}
 	}
 
 	return true;
-};
-
+}
 
