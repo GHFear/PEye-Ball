@@ -29,7 +29,7 @@ bool print_dos_header(PE_DATABASE* database)
 		{
 			printf("  *--Reserved words: %04X\n", database->dos_header->e_res2[i]);
 		}
-		printf("  *--File address of new exe header: %ld\n\n", database->dos_header->e_lfanew);
+		printf("  *--File address of new exe header: %d\n\n", database->dos_header->e_lfanew);
 	}
 	catch (const std::exception&error)
 	{
@@ -64,7 +64,7 @@ bool print_nt_headers(PE_DATABASE* database)
 		printf("  *--SizeOfUninitializedData: %08X\n", database->nt_headers->OptionalHeader.SizeOfUninitializedData);
 		printf("  *--AddressOfEntryPoint: %08X\n", database->nt_headers->OptionalHeader.AddressOfEntryPoint);
 		printf("  *--BaseOfCode: %08X\n", database->nt_headers->OptionalHeader.BaseOfCode);
-		printf("  *--ImageBase: %llu\n", database->nt_headers->OptionalHeader.ImageBase);
+		printf("  *--ImageBase: %lu\n", database->nt_headers->OptionalHeader.ImageBase);
 		printf("  *--SectionAlignment: %08X\n", database->nt_headers->OptionalHeader.SectionAlignment);
 		printf("  *--FileAlignment: %08X\n", database->nt_headers->OptionalHeader.FileAlignment);
 		printf("  *--MajorOperatingSystemVersion: %04X\n", database->nt_headers->OptionalHeader.MajorOperatingSystemVersion);
@@ -79,16 +79,16 @@ bool print_nt_headers(PE_DATABASE* database)
 		printf("  *--CheckSum: %08X\n", database->nt_headers->OptionalHeader.CheckSum);
 		printf("  *--Subsystem: %04X\n", database->nt_headers->OptionalHeader.Subsystem);
 		printf("  *--DllCharacteristics: %04X\n", database->nt_headers->OptionalHeader.DllCharacteristics);
-		printf("  *--SizeOfStackReserve: %llu\n", database->nt_headers->OptionalHeader.SizeOfStackReserve);
-		printf("  *--SizeOfStackCommit: %llu\n", database->nt_headers->OptionalHeader.SizeOfStackCommit);
-		printf("  *--SizeOfHeapReserve: %llu\n", database->nt_headers->OptionalHeader.SizeOfHeapReserve);
-		printf("  *--SizeOfHeapCommit: %llu\n", database->nt_headers->OptionalHeader.SizeOfHeapCommit);
+		printf("  *--SizeOfStackReserve: %lu\n", database->nt_headers->OptionalHeader.SizeOfStackReserve);
+		printf("  *--SizeOfStackCommit: %lu\n", database->nt_headers->OptionalHeader.SizeOfStackCommit);
+		printf("  *--SizeOfHeapReserve: %lu\n", database->nt_headers->OptionalHeader.SizeOfHeapReserve);
+		printf("  *--SizeOfHeapCommit: %lu\n", database->nt_headers->OptionalHeader.SizeOfHeapCommit);
 		printf("  *--LoaderFlags: %08X\n", database->nt_headers->OptionalHeader.LoaderFlags);
 		printf("  *--NumberOfRvaAndSizes: %08X\n\n", database->nt_headers->OptionalHeader.NumberOfRvaAndSizes);
 		printf("--< Data Directories >--\n");
 		for (size_t i = 0; i < 16; i++)
 		{
-			printf("  *--Data Directory %d\n", i);
+			printf("  *--Data Directory %ld\n", i);
 			printf("     *--VirtualAddress: %08X\n", database->nt_headers->OptionalHeader.DataDirectory[i].VirtualAddress);
 			printf("     *--Size: %08X\n\n", database->nt_headers->OptionalHeader.DataDirectory[i].Size);
 		}
@@ -111,7 +111,7 @@ bool print_section_headers(PE_DATABASE* database)
 	{
 		for (size_t i = 0; i < database->section_header.size(); i++)
 		{
-			printf("--( SECTION HEADER %d )--\n", i);
+			printf("--( SECTION HEADER %ld )--\n", i);
 			  printf("  *--Name: %s\n", database->section_header[i]->Name);
 			printf("  *--PhysicalAddress: %08X\n", database->section_header[i]->Misc.PhysicalAddress);
 			printf("  *--VirtualSize: %08X\n", database->section_header[i]->Misc.VirtualSize);
@@ -157,7 +157,7 @@ bool print_import_descriptors(PE_DATABASE* database, void* exe_base)
 		for (size_t j = 0; j < thunkCollection.size(); j++)
 		{
 
-			printf("     *--Function: %d\n", j);
+			printf("     *--Function: %ld\n", j);
 
 			auto& thunkData = thunkCollection[j].thunk_data64;
 			auto& importByName = thunkCollection[j].import_by_name;
@@ -165,7 +165,7 @@ bool print_import_descriptors(PE_DATABASE* database, void* exe_base)
 			if ((thunkData.u1.Function & 0x8000000000000000) == 0x8000000000000000) //Is Ordinal
 			{
 				auto thunk_ordinal = thunkData.u1.Ordinal & 0xFFFF;
-				printf("     *--Ordinal: %p\n\n", thunk_ordinal);
+				printf("     *--Ordinal: %ld\n\n", thunk_ordinal);
 			}
 			else //Is Name
 			{

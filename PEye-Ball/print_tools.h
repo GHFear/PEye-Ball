@@ -34,7 +34,7 @@ bool print_exe_to_load(const char* file_path)
 	{
 		printf("\n");
 		printf("--(Load Information)--\n");
-		printf("   *--Loading Executable: %ls\n", file_path);
+		printf("   *--Loading Executable: %s\n", file_path);
 	}
 	catch (const std::exception& error)
 	{
