@@ -2,110 +2,110 @@
 
 
 struct DOS_HEADER {      // DOS .EXE header
-    WORD   e_magic;                     // Magic number
-    WORD   e_cblp;                      // Bytes on last page of file
-    WORD   e_cp;                        // Pages in file
-    WORD   e_crlc;                      // Relocations
-    WORD   e_cparhdr;                   // Size of header in paragraphs
-    WORD   e_minalloc;                  // Minimum extra paragraphs needed
-    WORD   e_maxalloc;                  // Maximum extra paragraphs needed
-    WORD   e_ss;                        // Initial (relative) SS value
-    WORD   e_sp;                        // Initial SP value
-    WORD   e_csum;                      // Checksum
-    WORD   e_ip;                        // Initial IP value
-    WORD   e_cs;                        // Initial (relative) CS value
-    WORD   e_lfarlc;                    // File address of relocation table
-    WORD   e_ovno;                      // Overlay number
-    WORD   e_res[4];                    // Reserved words
-    WORD   e_oemid;                     // OEM identifier (for e_oeminfo)
-    WORD   e_oeminfo;                   // OEM information; e_oemid specific
-    WORD   e_res2[10];                  // Reserved words
-    LONG   e_lfanew;                    // File address of new exe header
+    uint16_t   e_magic;                     // Magic number
+    uint16_t   e_cblp;                      // Bytes on last page of file
+    uint16_t   e_cp;                        // Pages in file
+    uint16_t   e_crlc;                      // Relocations
+    uint16_t   e_cparhdr;                   // Size of header in paragraphs
+    uint16_t   e_minalloc;                  // Minimum extra paragraphs needed
+    uint16_t   e_maxalloc;                  // Maximum extra paragraphs needed
+    uint16_t   e_ss;                        // Initial (relative) SS value
+    uint16_t   e_sp;                        // Initial SP value
+    uint16_t   e_csum;                      // Checksum
+    uint16_t   e_ip;                        // Initial IP value
+    uint16_t   e_cs;                        // Initial (relative) CS value
+    uint16_t   e_lfarlc;                    // File address of relocation table
+    uint16_t   e_ovno;                      // Overlay number
+    uint16_t   e_res[4];                    // Reserved words
+    uint16_t   e_oemid;                     // OEM identifier (for e_oeminfo)
+    uint16_t   e_oeminfo;                   // OEM information; e_oemid specific
+    uint16_t   e_res2[10];                  // Reserved words
+    int32_t   e_lfanew;                    // File address of new exe header
 };
 
 struct FILE_HEADER {
-    WORD    Machine;
-    WORD    NumberOfSections;
-    DWORD   TimeDateStamp;
-    DWORD   PointerToSymbolTable;
-    DWORD   NumberOfSymbols;
-    WORD    SizeOfOptionalHeader;
-    WORD    Characteristics;
+    uint16_t    Machine;
+    uint16_t    NumberOfSections;
+    uint32_t   TimeDateStamp;
+    uint32_t   PointerToSymbolTable;
+    uint32_t   NumberOfSymbols;
+    uint16_t    SizeOfOptionalHeader;
+    uint16_t    Characteristics;
 };
 
 struct DATA_DIRECTORY {
-    DWORD   VirtualAddress;
-    DWORD   Size;
+    uint32_t   VirtualAddress;
+    uint32_t   Size;
 };
 
 struct OPTIONAL_HEADER64 {
-    WORD        Magic;
-    BYTE        MajorLinkerVersion;
-    BYTE        MinorLinkerVersion;
-    DWORD       SizeOfCode;
-    DWORD       SizeOfInitializedData;
-    DWORD       SizeOfUninitializedData;
-    DWORD       AddressOfEntryPoint;
-    DWORD       BaseOfCode;
-    ULONGLONG   ImageBase;
-    DWORD       SectionAlignment;
-    DWORD       FileAlignment;
-    WORD        MajorOperatingSystemVersion;
-    WORD        MinorOperatingSystemVersion;
-    WORD        MajorImageVersion;
-    WORD        MinorImageVersion;
-    WORD        MajorSubsystemVersion;
-    WORD        MinorSubsystemVersion;
-    DWORD       Win32VersionValue;
-    DWORD       SizeOfImage;
-    DWORD       SizeOfHeaders;
-    DWORD       CheckSum;
-    WORD        Subsystem;
-    WORD        DllCharacteristics;
-    ULONGLONG   SizeOfStackReserve;
-    ULONGLONG   SizeOfStackCommit;
-    ULONGLONG   SizeOfHeapReserve;
-    ULONGLONG   SizeOfHeapCommit;
-    DWORD       LoaderFlags;
-    DWORD       NumberOfRvaAndSizes;
-    DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
+    uint16_t        Magic;
+    uint8_t        MajorLinkerVersion;
+    uint8_t        MinorLinkerVersion;
+    uint32_t       SizeOfCode;
+    uint32_t       SizeOfInitializedData;
+    uint32_t       SizeOfUninitializedData;
+    uint32_t       AddressOfEntryPoint;
+    uint32_t       BaseOfCode;
+    uint64_t   ImageBase;
+    uint32_t       SectionAlignment;
+    uint32_t       FileAlignment;
+    uint16_t        MajorOperatingSystemVersion;
+    uint16_t        MinorOperatingSystemVersion;
+    uint16_t        MajorImageVersion;
+    uint16_t        MinorImageVersion;
+    uint16_t        MajorSubsystemVersion;
+    uint16_t        MinorSubsystemVersion;
+    uint32_t       Win32VersionValue;
+    uint32_t       SizeOfImage;
+    uint32_t       SizeOfHeaders;
+    uint32_t       CheckSum;
+    uint16_t        Subsystem;
+    uint16_t        DllCharacteristics;
+    uint64_t   SizeOfStackReserve;
+    uint64_t   SizeOfStackCommit;
+    uint64_t   SizeOfHeapReserve;
+    uint64_t   SizeOfHeapCommit;
+    uint32_t       LoaderFlags;
+    uint32_t       NumberOfRvaAndSizes;
+    DATA_DIRECTORY DataDirectory[16];
 };
 
 struct NT_HEADERS64 {
-    DWORD Signature;
+    uint32_t Signature;
     FILE_HEADER FileHeader;
     OPTIONAL_HEADER64 OptionalHeader;
 };
 
 
 struct SECTION_HEADER {
-    BYTE    Name[IMAGE_SIZEOF_SHORT_NAME];
+    uint8_t    Name[8];
     union {
-        DWORD   PhysicalAddress;
-        DWORD   VirtualSize;
+        uint32_t   PhysicalAddress;
+        uint32_t   VirtualSize;
     } Misc;
-    DWORD   VirtualAddress;
-    DWORD   SizeOfRawData;
-    DWORD   PointerToRawData;
-    DWORD   PointerToRelocations;
-    DWORD   PointerToLinenumbers;
-    WORD    NumberOfRelocations;
-    WORD    NumberOfLinenumbers;
-    DWORD   Characteristics;
+    uint32_t   VirtualAddress;
+    uint32_t   SizeOfRawData;
+    uint32_t   PointerToRawData;
+    uint32_t   PointerToRelocations;
+    uint32_t   PointerToLinenumbers;
+    uint16_t    NumberOfRelocations;
+    uint16_t    NumberOfLinenumbers;
+    uint32_t   Characteristics;
 };
 
 struct IMPORT_BY_NAME {
-    WORD    Hint;
+    uint16_t    Hint;
     const char*   Name;
 };
 
 
 struct THUNK_DATA64 {
     union {
-        ULONGLONG ForwarderString;  // PBYTE 
-        ULONGLONG Function;         // PDWORD
-        ULONGLONG Ordinal;
-        ULONGLONG AddressOfData;    // PIMAGE_IMPORT_BY_NAME
+        uint64_t ForwarderString;  // PBYTE 
+        uint64_t Function;         // PDWORD
+        uint64_t Ordinal;
+        uint64_t AddressOfData;    // PIMAGE_IMPORT_BY_NAME
     } u1;
 };
 
@@ -116,17 +116,17 @@ struct Thunk_Collection64 {
 
 struct IMPORT_DESCRIPTOR {
     union {
-        DWORD   Characteristics;            // 0 for terminating null import descriptor
-        DWORD   OriginalFirstThunk;         // RVA to original unbound IAT (PIMAGE_THUNK_DATA)
+        uint32_t   Characteristics;            // 0 for terminating null import descriptor
+        uint32_t   OriginalFirstThunk;         // RVA to original unbound IAT (PIMAGE_THUNK_DATA)
     } import_desc_union;
-    DWORD   TimeDateStamp;                  // 0 if not bound,
+    uint32_t   TimeDateStamp;                  // 0 if not bound,
     // -1 if bound, and real date\time stamp
     //     in IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT (new BIND)
     // O.W. date/time stamp of DLL bound to (Old BIND)
 
-    DWORD   ForwarderChain;                 // -1 if no forwarders
-    DWORD   Name;
-    DWORD   FirstThunk;                     // RVA to IAT (if bound this IAT has actual addresses)
+    uint32_t   ForwarderChain;                 // -1 if no forwarders
+    uint32_t   Name;
+    uint32_t   FirstThunk;                     // RVA to IAT (if bound this IAT has actual addresses)
 };
 
 

@@ -28,16 +28,13 @@ bool print_intro(const char* gh_disasm_version)
 	return true;
 }
 
-bool print_exe_to_load(const wchar_t* file_path)
+bool print_exe_to_load(const char* file_path)
 {
 	try
 	{
-		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 		printf("\n");
-		SetConsoleTextAttribute(hConsole, 12);
 		printf("--(Load Information)--\n");
-		SetConsoleTextAttribute(hConsole, 15);
-		wprintf(L"   *--Loading Executable: %ls\n", file_path);
+		printf("   *--Loading Executable: %ls\n", file_path);
 	}
 	catch (const std::exception& error)
 	{

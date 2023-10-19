@@ -11,7 +11,7 @@ void* add_base_offset_rva(void* exe_base, int offset, int rva)
 	return static_cast<char*>(exe_base) + offset - rva;
 }
 
-DWORD get_disk_rva_translation(PE_DATABASE* database)
+uint32_t get_disk_rva_translation(PE_DATABASE* database)
 {
     if (database->nt_headers->FileHeader.NumberOfSections == 0) return -1;
 

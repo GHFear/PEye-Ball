@@ -1,10 +1,16 @@
 #pragma once
-#include <windows.h>
+#pragma warning(disable:4996)
 #include <stdio.h>
-#include <wincrypt.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#ifdef __linux__
+#include <sys/mman.h>
+#include <unistd.h>
+#elif _WIN64
+#include <Windows.h>
+#endif
 #include <string>
 #include <iostream>
-#include <winnt.h>
 #include <vector>
 #include <map>
 #include "pe_structs.h"

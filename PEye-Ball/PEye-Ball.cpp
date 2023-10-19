@@ -1,14 +1,22 @@
 #include "shared_headers.h"
 
-int wmain(int argc, wchar_t* argv[]) 
+int main(int argc, char* argv[]) 
 {
 	//Intro
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute(hConsole, 12);
-	::ShowWindow(::GetConsoleWindow(), SW_SHOW);
 	const char* gh_disasm_version = "0.0.8";
-	if (!print_intro(gh_disasm_version)) { clean_exit(nullptr); }
-	SetConsoleTextAttribute(hConsole, 15);
+	#ifdef __linux__
+	if (!print_intro(gh_disasm_version)) {
+		printf("Press any key to exit...\n");
+		int pause = getchar();
+		exit(1);
+	}
+	#elif _WIN64
+	if (!print_intro(gh_disasm_version)) {
+	system("Pause");
+	exit(1);
+	}
+	#endif
+	
 
 	//Load exe
 	auto file_path = path_to_load(argc, argv[1]);
@@ -30,4 +38,5 @@ int wmain(int argc, wchar_t* argv[])
 
 	//Exit
 	clean_exit(loaded_exe.loadFile);
+	return 1;
 }

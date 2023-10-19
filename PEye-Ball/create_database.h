@@ -30,7 +30,7 @@ bool create_section_headers(PE_DATABASE* database, void* exe_base)
 auto create_imported_functions(PE_DATABASE* database, void* exe_base, int loop_index)
 {
 	std::vector<Thunk_Collection64> thunk_collection_vector;
-	DWORD disk_rva_offset = get_disk_rva_translation(database);
+	uint32_t disk_rva_offset = get_disk_rva_translation(database);
 	struct RESULT { bool boolean; std::vector<Thunk_Collection64> thunk_collection; };
 
 	if (disk_rva_offset == -1)
@@ -61,7 +61,7 @@ auto create_imported_functions(PE_DATABASE* database, void* exe_base, int loop_i
 			if (!(first_thunk->u1.Function & 0x8000000000000000))
 			{
 				function_names->Name = static_cast<const char*>(function_name_address) + 2;
-				function_names->Hint = *(WORD*)static_cast<WORD*>(function_name_address);
+				function_names->Hint = *(uint32_t*)static_cast<uint16_t*>(function_name_address);
 			}
 			thunk_collection.import_by_name = *function_names;
 			thunk_collection_vector.push_back(thunk_collection);

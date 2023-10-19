@@ -1,22 +1,8 @@
 #pragma once
 
-enum InputType
+bool IsExe(const std::string& fileName)
 {
-	Single_Arg,
-	Double_Arg,
-	Invalid_Arg
-};
-
-void clean_exit(HANDLE exe_handle)
-{
-	if (exe_handle != nullptr) { CloseHandle(exe_handle); }
-	system("pause");
-	exit(1);
-}
-
-bool IsExe(const std::wstring& fileName)
-{
-	return fileName.size() >= 4 && fileName.compare(fileName.size() - 3, 3, L"exe") == 0;
+    return fileName.size() >= 4 && fileName.compare(fileName.size() - 3, 3, "exe") == 0;
 }
 
 std::wstring GetNameWithoutExtensionFromFullPath(std::wstring full_path)
@@ -30,6 +16,78 @@ std::wstring GetNameWithoutExtensionFromFullPath(std::wstring full_path)
 	}
 
 	return full_path.substr(last_slash_idx + 1);
+}
+
+
+#ifdef __linux__
+
+void clean_exit(int exe_handle)
+{
+	if (exe_handle != -1) { close(exe_handle); }
+	printf("Press any key to exit...\n");
+	int pause = getchar();
+	exit(1);
+}
+
+auto process_exe(const char* file_path)
+{
+	struct RESULT { int loadFile; void* exe_base; };
+
+	int fd = open(file_path, O_RDONLY);
+	if (fd == -1) {
+		std::cerr << "Failed to open the file." << std::endl;
+		return RESULT{ -1, nullptr };
+	}
+
+	struct stat file_info;
+	if (fstat(fd, &file_info) == -1) {
+		std::cerr << "Failed to get file size." << std::endl;
+		close(fd);
+		return RESULT{ -1, nullptr };
+	}
+	size_t file_size = file_info.st_size;
+
+	void* file_data = mmap(nullptr, file_size, PROT_READ, MAP_PRIVATE, fd, 0);
+	if (file_data == MAP_FAILED) {
+		std::cerr << "Failed to map the file into memory." << std::endl;
+		close(fd);
+		return RESULT{ -1, nullptr };
+	}
+
+	return RESULT{ fd, file_data };
+};
+
+std::string path_to_load(int argc, char* argv)
+{
+	if (argc < 1 || argc > 2) {
+		printf("Input path is in the wrong format!\n");
+		clean_exit(-1);
+	}
+
+	std::string path_input_W;
+
+	if (argc == 1) {
+		std::cout << "\nENTER AMD64 EXE PATH: ";
+		std::getline(std::cin, path_input_W);
+	}
+	else {
+		path_input_W = argv;
+	}
+
+	if (!IsExe(path_input_W) || !print_exe_to_load(path_input_W.c_str())) {
+		clean_exit(-1);
+	}
+
+	return path_input_W;
+}
+
+#elif _WIN64
+
+void clean_exit(HANDLE exe_handle)
+{
+	if (exe_handle != nullptr) { CloseHandle(exe_handle); }
+	system("Pause");
+	exit(1);
 }
 
 auto create_exe_buffer(void* exe_file_handle)
@@ -51,10 +109,10 @@ auto create_exe_buffer(void* exe_file_handle)
 	return result{ lpBuffer, number_of_bytes_to_read };
 }
 
-auto process_exe(const wchar_t* file_path)
+auto process_exe(const char* file_path)
 {
 	struct RESULT { HANDLE loadFile; void* exe_base; };
-	HANDLE loadFile = CreateFileW(file_path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE loadFile = CreateFileA(file_path, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
 	if (loadFile == INVALID_HANDLE_VALUE)
 		return RESULT{ loadFile, nullptr };
@@ -71,18 +129,19 @@ auto process_exe(const wchar_t* file_path)
 	return RESULT{ loadFile, exe_buffer.lpBuffer };
 };
 
-std::wstring path_to_load(int argc, wchar_t* argv)
+
+std::string path_to_load(int argc, char* argv)
 {
 	if (argc < 1 || argc > 2) {
 		printf("Input path is in the wrong format!\n");
 		clean_exit(nullptr);
 	}
 
-	std::wstring path_input_W;
+	std::string path_input_W;
 
 	if (argc == 1) {
-		std::wcout << L"\nENTER AMD64 EXE PATH: ";
-		std::getline(std::wcin, path_input_W);
+		std::cout << "\nENTER AMD64 EXE PATH: ";
+		std::getline(std::cin, path_input_W);
 	}
 	else {
 		path_input_W = argv;
@@ -94,3 +153,6 @@ std::wstring path_to_load(int argc, wchar_t* argv)
 
 	return path_input_W;
 }
+
+#endif
+

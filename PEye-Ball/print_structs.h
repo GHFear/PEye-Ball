@@ -4,35 +4,32 @@ bool print_dos_header(PE_DATABASE* database)
 {
 	try
 	{
-		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-		SetConsoleTextAttribute(hConsole, 12);
-		wprintf(L"--( DOS HEADER )--\n");
-		SetConsoleTextAttribute(hConsole, 15);
-		wprintf(L"  *--Magic number: %04X\n", database->dos_header->e_magic);
-		wprintf(L"  *--Bytes on last page of file: %04X\n", database->dos_header->e_cblp);
-		wprintf(L"  *--Pages in file: %04X\n", database->dos_header->e_cp);
-		wprintf(L"  *--Relocations: %04X\n", database->dos_header->e_crlc);
-		wprintf(L"  *--Size of header in paragraphs: %04X\n", database->dos_header->e_cparhdr);
-		wprintf(L"  *--Minimum extra paragraphs needed: %04X\n", database->dos_header->e_minalloc);
-		wprintf(L"  *--Maximum extra paragraphs needed: %04X\n", database->dos_header->e_maxalloc);
-		wprintf(L"  *--Initial (relative) SS value: %04X\n", database->dos_header->e_ss);
-		wprintf(L"  *--Initial SP value: %04X\n", database->dos_header->e_sp);
-		wprintf(L"  *--Checksum: %04X\n", database->dos_header->e_csum);
-		wprintf(L"  *--Initial IP value: %04X\n", database->dos_header->e_ip);
-		wprintf(L"  *--Initial (relative) CS value: %04X\n", database->dos_header->e_cs);
-		wprintf(L"  *--File address of relocation table: %04X\n", database->dos_header->e_lfarlc);
-		wprintf(L"  *--Overlay number: %04X\n", database->dos_header->e_ovno);
+		printf("--( DOS HEADER )--\n");
+		printf("  *--Magic number: %04X\n", database->dos_header->e_magic);
+		printf("  *--Bytes on last page of file: %04X\n", database->dos_header->e_cblp);
+		printf("  *--Pages in file: %04X\n", database->dos_header->e_cp);
+		printf("  *--Relocations: %04X\n", database->dos_header->e_crlc);
+		printf("  *--Size of header in paragraphs: %04X\n", database->dos_header->e_cparhdr);
+		printf("  *--Minimum extra paragraphs needed: %04X\n", database->dos_header->e_minalloc);
+		printf("  *--Maximum extra paragraphs needed: %04X\n", database->dos_header->e_maxalloc);
+		printf("  *--Initial (relative) SS value: %04X\n", database->dos_header->e_ss);
+		printf("  *--Initial SP value: %04X\n", database->dos_header->e_sp);
+		printf("  *--Checksum: %04X\n", database->dos_header->e_csum);
+		printf("  *--Initial IP value: %04X\n", database->dos_header->e_ip);
+		printf("  *--Initial (relative) CS value: %04X\n", database->dos_header->e_cs);
+		printf("  *--File address of relocation table: %04X\n", database->dos_header->e_lfarlc);
+		printf("  *--Overlay number: %04X\n", database->dos_header->e_ovno);
 		for (size_t i = 0; i < 4; i++)
 		{
-			wprintf(L"  *--Reserved words: %04X\n", database->dos_header->e_res[i]);
+			printf("  *--Reserved words: %04X\n", database->dos_header->e_res[i]);
 		}
-		wprintf(L"  *--OEM identifier: %04X\n", database->dos_header->e_oemid);
-		wprintf(L"  *--OEM information: %04X\n", database->dos_header->e_oeminfo);
+		printf("  *--OEM identifier: %04X\n", database->dos_header->e_oemid);
+		printf("  *--OEM information: %04X\n", database->dos_header->e_oeminfo);
 		for (size_t i = 0; i < 10; i++)
 		{
-			wprintf(L"  *--Reserved words: %04X\n", database->dos_header->e_res2[i]);
+			printf("  *--Reserved words: %04X\n", database->dos_header->e_res2[i]);
 		}
-		wprintf(L"  *--File address of new exe header: %ld\n\n", database->dos_header->e_lfanew);
+		printf("  *--File address of new exe header: %ld\n\n", database->dos_header->e_lfanew);
 	}
 	catch (const std::exception&error)
 	{
@@ -48,61 +45,52 @@ bool print_nt_headers(PE_DATABASE* database)
 {
 	try
 	{
-		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-		SetConsoleTextAttribute(hConsole, 12);
-		wprintf(L"--( NT HEADERS64 )--\n");
-		SetConsoleTextAttribute(hConsole, 15);
-		wprintf(L"  *--Signature: %08X\n\n", database->nt_headers->Signature);
-		SetConsoleTextAttribute(hConsole, 12);
-		wprintf(L"--< FILE HEADER >--\n");
-		SetConsoleTextAttribute(hConsole, 15);
-		wprintf(L"  *--Machine: %04X\n", database->nt_headers->FileHeader.Machine);
-		wprintf(L"  *--NumberOfSections: %04X\n", database->nt_headers->FileHeader.NumberOfSections);
-		wprintf(L"  *--TimeDateStamp: %08X\n", database->nt_headers->FileHeader.TimeDateStamp);
-		wprintf(L"  *--PointerToSymbolTable: %08X\n", database->nt_headers->FileHeader.PointerToSymbolTable);
-		wprintf(L"  *--NumberOfSymbols: %08X\n", database->nt_headers->FileHeader.NumberOfSymbols);
-		wprintf(L"  *--SizeOfOptionalHeader: %04X\n", database->nt_headers->FileHeader.SizeOfOptionalHeader);
-		wprintf(L"  *--Characteristics: %04X\n\n", database->nt_headers->FileHeader.Characteristics);
-		SetConsoleTextAttribute(hConsole, 12);
-		wprintf(L"--< FILE HEADER >--\n");
-		SetConsoleTextAttribute(hConsole, 15);
-		wprintf(L"  *--Magic: %04X\n", database->nt_headers->OptionalHeader.Magic);
-		wprintf(L"  *--MajorLinkerVersion: %02X\n", database->nt_headers->OptionalHeader.MajorLinkerVersion);
-		wprintf(L"  *--MinorLinkerVersion: %02X\n", database->nt_headers->OptionalHeader.MinorLinkerVersion);
-		wprintf(L"  *--SizeOfCode: %08X\n", database->nt_headers->OptionalHeader.SizeOfCode);
-		wprintf(L"  *--SizeOfInitializedData: %08X\n", database->nt_headers->OptionalHeader.SizeOfInitializedData);
-		wprintf(L"  *--SizeOfUninitializedData: %08X\n", database->nt_headers->OptionalHeader.SizeOfUninitializedData);
-		wprintf(L"  *--AddressOfEntryPoint: %08X\n", database->nt_headers->OptionalHeader.AddressOfEntryPoint);
-		wprintf(L"  *--BaseOfCode: %08X\n", database->nt_headers->OptionalHeader.BaseOfCode);
-		wprintf(L"  *--ImageBase: %llu\n", database->nt_headers->OptionalHeader.ImageBase);
-		wprintf(L"  *--SectionAlignment: %08X\n", database->nt_headers->OptionalHeader.SectionAlignment);
-		wprintf(L"  *--FileAlignment: %08X\n", database->nt_headers->OptionalHeader.FileAlignment);
-		wprintf(L"  *--MajorOperatingSystemVersion: %04X\n", database->nt_headers->OptionalHeader.MajorOperatingSystemVersion);
-		wprintf(L"  *--MinorOperatingSystemVersion: %04X\n", database->nt_headers->OptionalHeader.MinorOperatingSystemVersion);
-		wprintf(L"  *--MajorImageVersion: %04X\n", database->nt_headers->OptionalHeader.MajorImageVersion);
-		wprintf(L"  *--MinorImageVersion: %04X\n", database->nt_headers->OptionalHeader.MinorImageVersion);
-		wprintf(L"  *--MajorSubsystemVersion: %04X\n", database->nt_headers->OptionalHeader.MajorSubsystemVersion);
-		wprintf(L"  *--MinorSubsystemVersion: %04X\n", database->nt_headers->OptionalHeader.MinorSubsystemVersion);
-		wprintf(L"  *--Win32VersionValue: %08X\n", database->nt_headers->OptionalHeader.Win32VersionValue);
-		wprintf(L"  *--SizeOfImage: %08X\n", database->nt_headers->OptionalHeader.SizeOfImage);
-		wprintf(L"  *--SizeOfHeaders: %08X\n", database->nt_headers->OptionalHeader.SizeOfHeaders);
-		wprintf(L"  *--CheckSum: %08X\n", database->nt_headers->OptionalHeader.CheckSum);
-		wprintf(L"  *--Subsystem: %04X\n", database->nt_headers->OptionalHeader.Subsystem);
-		wprintf(L"  *--DllCharacteristics: %04X\n", database->nt_headers->OptionalHeader.DllCharacteristics);
-		wprintf(L"  *--SizeOfStackReserve: %llu\n", database->nt_headers->OptionalHeader.SizeOfStackReserve);
-		wprintf(L"  *--SizeOfStackCommit: %llu\n", database->nt_headers->OptionalHeader.SizeOfStackCommit);
-		wprintf(L"  *--SizeOfHeapReserve: %llu\n", database->nt_headers->OptionalHeader.SizeOfHeapReserve);
-		wprintf(L"  *--SizeOfHeapCommit: %llu\n", database->nt_headers->OptionalHeader.SizeOfHeapCommit);
-		wprintf(L"  *--LoaderFlags: %08X\n", database->nt_headers->OptionalHeader.LoaderFlags);
-		wprintf(L"  *--NumberOfRvaAndSizes: %08X\n\n", database->nt_headers->OptionalHeader.NumberOfRvaAndSizes);
-		SetConsoleTextAttribute(hConsole, 12);
-		wprintf(L"--< Data Directories >--\n");
-		SetConsoleTextAttribute(hConsole, 15);
-		for (size_t i = 0; i < IMAGE_NUMBEROF_DIRECTORY_ENTRIES; i++)
+		printf("--( NT HEADERS64 )--\n");
+		printf("  *--Signature: %08X\n\n", database->nt_headers->Signature);
+		printf("--< FILE HEADER >--\n");
+		printf("  *--Machine: %04X\n", database->nt_headers->FileHeader.Machine);
+		printf("  *--NumberOfSections: %04X\n", database->nt_headers->FileHeader.NumberOfSections);
+		printf("  *--TimeDateStamp: %08X\n", database->nt_headers->FileHeader.TimeDateStamp);
+		printf("  *--PointerToSymbolTable: %08X\n", database->nt_headers->FileHeader.PointerToSymbolTable);
+		printf("  *--NumberOfSymbols: %08X\n", database->nt_headers->FileHeader.NumberOfSymbols);
+		printf("  *--SizeOfOptionalHeader: %04X\n", database->nt_headers->FileHeader.SizeOfOptionalHeader);
+		printf("  *--Characteristics: %04X\n\n", database->nt_headers->FileHeader.Characteristics);
+		printf("--< FILE HEADER >--\n");
+		printf("  *--Magic: %04X\n", database->nt_headers->OptionalHeader.Magic);
+		printf("  *--MajorLinkerVersion: %02X\n", database->nt_headers->OptionalHeader.MajorLinkerVersion);
+		printf("  *--MinorLinkerVersion: %02X\n", database->nt_headers->OptionalHeader.MinorLinkerVersion);
+		printf("  *--SizeOfCode: %08X\n", database->nt_headers->OptionalHeader.SizeOfCode);
+		printf("  *--SizeOfInitializedData: %08X\n", database->nt_headers->OptionalHeader.SizeOfInitializedData);
+		printf("  *--SizeOfUninitializedData: %08X\n", database->nt_headers->OptionalHeader.SizeOfUninitializedData);
+		printf("  *--AddressOfEntryPoint: %08X\n", database->nt_headers->OptionalHeader.AddressOfEntryPoint);
+		printf("  *--BaseOfCode: %08X\n", database->nt_headers->OptionalHeader.BaseOfCode);
+		printf("  *--ImageBase: %llu\n", database->nt_headers->OptionalHeader.ImageBase);
+		printf("  *--SectionAlignment: %08X\n", database->nt_headers->OptionalHeader.SectionAlignment);
+		printf("  *--FileAlignment: %08X\n", database->nt_headers->OptionalHeader.FileAlignment);
+		printf("  *--MajorOperatingSystemVersion: %04X\n", database->nt_headers->OptionalHeader.MajorOperatingSystemVersion);
+		printf("  *--MinorOperatingSystemVersion: %04X\n", database->nt_headers->OptionalHeader.MinorOperatingSystemVersion);
+		printf("  *--MajorImageVersion: %04X\n", database->nt_headers->OptionalHeader.MajorImageVersion);
+		printf("  *--MinorImageVersion: %04X\n", database->nt_headers->OptionalHeader.MinorImageVersion);
+		printf("  *--MajorSubsystemVersion: %04X\n", database->nt_headers->OptionalHeader.MajorSubsystemVersion);
+		printf("  *--MinorSubsystemVersion: %04X\n", database->nt_headers->OptionalHeader.MinorSubsystemVersion);
+		printf("  *--Win32VersionValue: %08X\n", database->nt_headers->OptionalHeader.Win32VersionValue);
+		printf("  *--SizeOfImage: %08X\n", database->nt_headers->OptionalHeader.SizeOfImage);
+		printf("  *--SizeOfHeaders: %08X\n", database->nt_headers->OptionalHeader.SizeOfHeaders);
+		printf("  *--CheckSum: %08X\n", database->nt_headers->OptionalHeader.CheckSum);
+		printf("  *--Subsystem: %04X\n", database->nt_headers->OptionalHeader.Subsystem);
+		printf("  *--DllCharacteristics: %04X\n", database->nt_headers->OptionalHeader.DllCharacteristics);
+		printf("  *--SizeOfStackReserve: %llu\n", database->nt_headers->OptionalHeader.SizeOfStackReserve);
+		printf("  *--SizeOfStackCommit: %llu\n", database->nt_headers->OptionalHeader.SizeOfStackCommit);
+		printf("  *--SizeOfHeapReserve: %llu\n", database->nt_headers->OptionalHeader.SizeOfHeapReserve);
+		printf("  *--SizeOfHeapCommit: %llu\n", database->nt_headers->OptionalHeader.SizeOfHeapCommit);
+		printf("  *--LoaderFlags: %08X\n", database->nt_headers->OptionalHeader.LoaderFlags);
+		printf("  *--NumberOfRvaAndSizes: %08X\n\n", database->nt_headers->OptionalHeader.NumberOfRvaAndSizes);
+		printf("--< Data Directories >--\n");
+		for (size_t i = 0; i < 16; i++)
 		{
-			wprintf(L"  *--Data Directory %d\n", i);
-			wprintf(L"     *--VirtualAddress: %08X\n", database->nt_headers->OptionalHeader.DataDirectory[i].VirtualAddress);
-			wprintf(L"     *--Size: %08X\n\n", database->nt_headers->OptionalHeader.DataDirectory[i].Size);
+			printf("  *--Data Directory %d\n", i);
+			printf("     *--VirtualAddress: %08X\n", database->nt_headers->OptionalHeader.DataDirectory[i].VirtualAddress);
+			printf("     *--Size: %08X\n\n", database->nt_headers->OptionalHeader.DataDirectory[i].Size);
 		}
 
 		printf("\n");
@@ -121,23 +109,20 @@ bool print_section_headers(PE_DATABASE* database)
 {
 	try
 	{
-		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 		for (size_t i = 0; i < database->section_header.size(); i++)
 		{
-			SetConsoleTextAttribute(hConsole, 12);
-			wprintf(L"--( SECTION HEADER %d )--\n", i);
-			SetConsoleTextAttribute(hConsole, 15);
+			printf("--( SECTION HEADER %d )--\n", i);
 			  printf("  *--Name: %s\n", database->section_header[i]->Name);
-			wprintf(L"  *--PhysicalAddress: %08X\n", database->section_header[i]->Misc.PhysicalAddress);
-			wprintf(L"  *--VirtualSize: %08X\n", database->section_header[i]->Misc.VirtualSize);
-			wprintf(L"  *--VirtualAddress: %08X\n", database->section_header[i]->VirtualAddress);
-			wprintf(L"  *--SizeOfRawData: %08X\n", database->section_header[i]->SizeOfRawData);
-			wprintf(L"  *--PointerToRawData: %08X\n", database->section_header[i]->PointerToRawData);
-			wprintf(L"  *--PointerToRelocations: %08X\n", database->section_header[i]->PointerToRelocations);
-			wprintf(L"  *--PointerToLinenumbers: %08X\n", database->section_header[i]->PointerToLinenumbers);
-			wprintf(L"  *--NumberOfRelocations: %04X\n", database->section_header[i]->NumberOfRelocations);
-			wprintf(L"  *--NumberOfLinenumbers: %04X\n", database->section_header[i]->NumberOfLinenumbers);
-			wprintf(L"  *--Characteristics: %08X\n\n", database->section_header[i]->Characteristics);
+			printf("  *--PhysicalAddress: %08X\n", database->section_header[i]->Misc.PhysicalAddress);
+			printf("  *--VirtualSize: %08X\n", database->section_header[i]->Misc.VirtualSize);
+			printf("  *--VirtualAddress: %08X\n", database->section_header[i]->VirtualAddress);
+			printf("  *--SizeOfRawData: %08X\n", database->section_header[i]->SizeOfRawData);
+			printf("  *--PointerToRawData: %08X\n", database->section_header[i]->PointerToRawData);
+			printf("  *--PointerToRelocations: %08X\n", database->section_header[i]->PointerToRelocations);
+			printf("  *--PointerToLinenumbers: %08X\n", database->section_header[i]->PointerToLinenumbers);
+			printf("  *--NumberOfRelocations: %04X\n", database->section_header[i]->NumberOfRelocations);
+			printf("  *--NumberOfLinenumbers: %04X\n", database->section_header[i]->NumberOfLinenumbers);
+			printf("  *--Characteristics: %08X\n\n", database->section_header[i]->Characteristics);
 		}
 	}
 	catch (const std::exception& error)
@@ -151,7 +136,7 @@ bool print_section_headers(PE_DATABASE* database)
 
 bool print_import_descriptors(PE_DATABASE* database, void* exe_base)
 {
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
 	auto rva_offset = get_disk_rva_translation(database);
 
 	for (int i = 0; i < database->import_descriptor.size(); i++)
@@ -160,21 +145,19 @@ bool print_import_descriptors(PE_DATABASE* database, void* exe_base)
 		auto& thunkCollection = database->thunk_collection[i];
 		auto dll_name_ptr = add_base_offset_rva(exe_base, importDesc.Name, rva_offset);
 
-		SetConsoleTextAttribute(hConsole, 12);
-		wprintf(L"--( IMPORT DESCRIPTOR %d )--\n", i);
-		SetConsoleTextAttribute(hConsole, 15);
-		wprintf(L"  *--Characteristics: %08X\n", importDesc.import_desc_union.Characteristics);
-		wprintf(L"  *--OriginalFirstThunk: %08X\n", importDesc.import_desc_union.OriginalFirstThunk);
-		wprintf(L"  *--TimeDateStamp: %08X\n", importDesc.TimeDateStamp);
-		wprintf(L"  *--ForwarderChain: %08X\n", importDesc.ForwarderChain);
+		printf("--( IMPORT DESCRIPTOR %d )--\n", i);
+		printf("  *--Characteristics: %08X\n", importDesc.import_desc_union.Characteristics);
+		printf("  *--OriginalFirstThunk: %08X\n", importDesc.import_desc_union.OriginalFirstThunk);
+		printf("  *--TimeDateStamp: %08X\n", importDesc.TimeDateStamp);
+		printf("  *--ForwarderChain: %08X\n", importDesc.ForwarderChain);
 		printf("  *--Name: %s\n", (const char*)dll_name_ptr);
-		wprintf(L"  *--FirstThunk: %08X\n", importDesc.FirstThunk);
-		wprintf(L"  *--Functions:\n");
+		printf("  *--FirstThunk: %08X\n", importDesc.FirstThunk);
+		printf("  *--Functions:\n");
 
 		for (size_t j = 0; j < thunkCollection.size(); j++)
 		{
-			SetConsoleTextAttribute(hConsole, 7);
-			wprintf(L"     *--Function: %d\n", j);
+
+			printf("     *--Function: %d\n", j);
 
 			auto& thunkData = thunkCollection[j].thunk_data64;
 			auto& importByName = thunkCollection[j].import_by_name;
@@ -189,7 +172,6 @@ bool print_import_descriptors(PE_DATABASE* database, void* exe_base)
 				printf("     *--Name: %s\n", importByName.Name);
 				printf("     *--Hint: %04X\n\n", importByName.Hint);
 			}
-			SetConsoleTextAttribute(hConsole, 15);
 		}
 	}
 
