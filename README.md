@@ -4,8 +4,10 @@ PEye-Ball 0.0.8<br>
 PE Parser for Windows and Linux.<br>
 Compiles on both platforms.<br>
 
-Compile for Win64 using solution file.<br>
-Compile for Linux using Visual Studio Code (or editor of your choice) and g++ build file.<br>
+Build project with cmake 3.10 and above from (build) directory with terminal commands<br>
+Create cmake files with command: "cmake ../"<br>
+Build executable with command: "make"<br>
+
 Will add more features to this project in the future.<br>
 
 By GHFear.
