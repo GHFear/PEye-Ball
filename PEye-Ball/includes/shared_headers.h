@@ -3,8 +3,6 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <iostream>
-#include <cstdio>
 #ifdef __linux__
 #include <sys/mman.h>
 #include <unistd.h>
@@ -15,7 +13,6 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include "terminal_handler.h"
 #include "pe_structs.h"
 #include "tools.h"
 #include "print_structs.h"

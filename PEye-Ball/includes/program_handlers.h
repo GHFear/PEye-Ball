@@ -124,7 +124,11 @@ auto process_exe(const char* file_path)
 		printf("   *--Loaded %d bytes from exe into exe_buffer.lpBuffer!\n", number_of_bytes_read);
 
 	if (!exe_buffer.lpBuffer || number_of_bytes_read == 0)
-		clean_exit(loadFile);
+	{
+		printf("exebuffer-lpbuffer or number_of_bytes_read = 0.");
+		return RESULT{ loadFile, nullptr };
+	}
+		
 
 	return RESULT{ loadFile, exe_buffer.lpBuffer };
 };

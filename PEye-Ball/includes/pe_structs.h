@@ -130,12 +130,35 @@ struct IMPORT_DESCRIPTOR {
 };
 
 
+struct EXPORT_COLLECTION {
+    std::vector <uint32_t> FunctionRVA;
+    std::vector <uint32_t> NameRVA;
+    std::vector <uint16_t> NameOrdinalRVA;
+};
+
+struct EXPORT_DIRECTORY {
+    uint32_t	Characteristics;
+    uint32_t	TimeDateStamp;
+    uint16_t	MajorVersion;
+    uint16_t	MinorVersion;
+    uint32_t	Name;
+    uint32_t	Base;
+    uint32_t	NumberOfFunctions;
+    uint32_t	NumberOfNames;
+    uint32_t	AddressOfFunctions;
+    uint32_t	AddressOfNames;
+    uint32_t	AddressOfNameOrdinals;
+};
+
+
 
 struct PE_DATABASE {
     DOS_HEADER* dos_header = nullptr;
     NT_HEADERS64* nt_headers = nullptr;
     std::vector<SECTION_HEADER*> section_header;
     std::vector<IMPORT_DESCRIPTOR*> import_descriptor;
-    std::vector<std::vector<Thunk_Collection64>> thunk_collection;
+    std::vector<std::vector<Thunk_Collection64>> import_thunk_collection;
+    EXPORT_DIRECTORY* export_directory = nullptr;
+    EXPORT_COLLECTION export_thunk_collection;
 
 };

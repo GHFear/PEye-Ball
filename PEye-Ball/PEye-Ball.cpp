@@ -2,9 +2,8 @@
 
 int main(int argc, char* argv[]) 
 {
-
 	//Intro
-	const char* gh_disasm_version = "0.0.8";
+	const char* gh_disasm_version = "0.0.9";
 	#ifdef __linux__
 	if (!print_intro(gh_disasm_version)) {
 		printf("Press any key to exit...\n");
@@ -17,7 +16,6 @@ int main(int argc, char* argv[])
 	exit(1);
 	}
 	#endif
-	
 
 	//Load exe
 	auto file_path = path_to_load(argc, argv[1]);
@@ -29,13 +27,17 @@ int main(int argc, char* argv[])
 	if (!create_nt_headers(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
 	if (!create_section_headers(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
 	if (!create_import_descriptors(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
-	if (!create_thunk_collections(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
+	if (!create_import_thunk_collections(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
+	if (!create_export_directory(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
+	if (!create_export_functions(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
 
 	//Print Database
 	if (!print_dos_header(database)) { clean_exit(loaded_exe.loadFile); }
 	if (!print_nt_headers(database)) { clean_exit(loaded_exe.loadFile); }
 	if (!print_section_headers(database)) { clean_exit(loaded_exe.loadFile); }
 	if (!print_import_descriptors(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
+	if (!print_export_directory(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
+	if (!print_export_functions(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
 
 	//Exit
 	clean_exit(loaded_exe.loadFile);
