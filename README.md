@@ -1,8 +1,11 @@
 # PEye-Ball
 
-PEye-Ball 0.0.8<br>
+PEye-Ball 0.0.9<br>
 PE Parser for Windows and Linux.<br>
-Compiles on both platforms.<br>
+
+0.0.9 Changelog:<br>
+-Added support for parsing exports.
+
 
 Build project with cmake 3.10 and above from (build) directory with terminal commands:<br>
 **"cmake ../"**    -- To create cmake project files.<br>
