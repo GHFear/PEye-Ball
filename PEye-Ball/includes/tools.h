@@ -1,12 +1,12 @@
 #pragma once
 
 
-void* add_base_offset(void* exe_base, int offset)
+void* add_base_offset(void* exe_base, uint64_t offset)
 {
 	return static_cast<char*>(exe_base) + offset;
 }
 
-void* add_base_offset_rva(void* exe_base, int offset, int rva)
+void* add_base_offset_rva(void* exe_base, uint64_t offset, uint64_t rva)
 {
 	return static_cast<char*>(exe_base) + offset - rva;
 }

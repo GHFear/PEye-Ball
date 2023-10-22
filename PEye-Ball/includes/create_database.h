@@ -49,34 +49,35 @@ auto create_imported_functions(PE_DATABASE* database, void* exe_base, int loop_i
 			return RESULT{ false, thunk_collection_vector };
 		}
 
-		int rva_counter = 0;
+		uint64_t rva_counter = 0;
 
 		while (true)
 		{
-			THUNK_DATA64* original_first_thunk = (THUNK_DATA64*)add_base_offset_rva(exe_base, (uintptr_t)(THUNK_DATA64*)database->import_descriptor[loop_index]->import_desc_union.OriginalFirstThunk + rva_counter, disk_rva_offset);
+			THUNK_DATA64* original_first_thunk = (THUNK_DATA64*)add_base_offset_rva((exe_base), ((uint64_t)database->import_descriptor[loop_index]->import_desc_union.OriginalFirstThunk + rva_counter), disk_rva_offset);
 
-			THUNK_DATA64* first_thunk = (THUNK_DATA64*)add_base_offset_rva(exe_base, (uintptr_t)(THUNK_DATA64*)database->import_descriptor[loop_index]->FirstThunk + rva_counter, disk_rva_offset);
+			THUNK_DATA64* first_thunk = (THUNK_DATA64*)add_base_offset_rva((exe_base), ((uint64_t)database->import_descriptor[loop_index]->FirstThunk + rva_counter), disk_rva_offset);
 
-			if ((uintptr_t)original_first_thunk->u1.Function == 0 || (uintptr_t)first_thunk->u1.Function == 0)
+			if ((uintptr_t)original_first_thunk->u1.Function == 0 || first_thunk->u1.Function == 0)
 				break;
 
 			Thunk_Collection64 thunk_collection;
 			thunk_collection.thunk_data64 = *original_first_thunk;
 
-			void* function_name_address = add_base_offset_rva(exe_base, (uintptr_t)first_thunk->u1.Function, disk_rva_offset);
+			void* function_name_address = add_base_offset_rva((exe_base), first_thunk->u1.Function, disk_rva_offset);
 
 			if (function_name_address != nullptr)
 			{
-				IMPORT_BY_NAME* function_names = new IMPORT_BY_NAME;
+				IMPORT_BY_NAME function_names;
+				function_names.Name = "";
+				function_names.Hint = 0;
 				if (!(first_thunk->u1.Function & 0x8000000000000000))
 				{
-					function_names->Name = static_cast<const char*>(function_name_address) + 2;
-					function_names->Hint = *(uint16_t*)static_cast<uint16_t*>(function_name_address);
+					function_names.Name = static_cast<const char*>(function_name_address) + 2;
+					function_names.Hint = *(uint16_t*)static_cast<uint16_t*>(function_name_address);
 				}
-				thunk_collection.import_by_name = *function_names;
+				thunk_collection.import_by_name = function_names;
 				thunk_collection_vector.push_back(thunk_collection);
 			}
-
 			rva_counter += 8;
 		}
 	}
