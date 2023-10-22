@@ -1,7 +1,11 @@
 # PEye-Ball
 
-PEye-Ball 0.0.9<br>
+PEye-Ball 0.1.0<br>
 PE Parser for Windows and Linux.<br>
+
+0.1.0 Changelog:<br>
+-Added support for parsing delayed load imports.
+-Fixed print types and some wrong casts.
 
 0.0.9 Changelog:<br>
 -Added support for parsing exports.
