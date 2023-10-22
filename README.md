@@ -1,6 +1,6 @@
 # PEye-Ball
 
-PEye-Ball 0.1.0<br>
+**PEye-Ball 0.1.0** <br>
 PE Parser for Windows and Linux.<br>
 
 **0.1.0 Changelog:** <br>
