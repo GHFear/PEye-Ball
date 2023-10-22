@@ -19,13 +19,13 @@ bool print_dos_header(PE_DATABASE* database)
 		printf("  *--Initial (relative) CS value: %04X\n", database->dos_header->e_cs);
 		printf("  *--File address of relocation table: %04X\n", database->dos_header->e_lfarlc);
 		printf("  *--Overlay number: %04X\n", database->dos_header->e_ovno);
-		for (size_t i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			printf("  *--Reserved words: %04X\n", database->dos_header->e_res[i]);
 		}
 		printf("  *--OEM identifier: %04X\n", database->dos_header->e_oemid);
 		printf("  *--OEM information: %04X\n", database->dos_header->e_oeminfo);
-		for (size_t i = 0; i < 10; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			printf("  *--Reserved words: %04X\n", database->dos_header->e_res2[i]);
 		}
@@ -39,7 +39,6 @@ bool print_dos_header(PE_DATABASE* database)
 	
 	return true;
 };
-
 
 bool print_nt_headers(PE_DATABASE* database)
 {
@@ -64,7 +63,7 @@ bool print_nt_headers(PE_DATABASE* database)
 		printf("  *--SizeOfUninitializedData: %08X\n", database->nt_headers->OptionalHeader.SizeOfUninitializedData);
 		printf("  *--AddressOfEntryPoint: %08X\n", database->nt_headers->OptionalHeader.AddressOfEntryPoint);
 		printf("  *--BaseOfCode: %08X\n", database->nt_headers->OptionalHeader.BaseOfCode);
-		printf("  *--ImageBase: %lu\n", database->nt_headers->OptionalHeader.ImageBase);
+		printf("  *--ImageBase: %llu\n", database->nt_headers->OptionalHeader.ImageBase);
 		printf("  *--SectionAlignment: %08X\n", database->nt_headers->OptionalHeader.SectionAlignment);
 		printf("  *--FileAlignment: %08X\n", database->nt_headers->OptionalHeader.FileAlignment);
 		printf("  *--MajorOperatingSystemVersion: %04X\n", database->nt_headers->OptionalHeader.MajorOperatingSystemVersion);
@@ -79,16 +78,16 @@ bool print_nt_headers(PE_DATABASE* database)
 		printf("  *--CheckSum: %08X\n", database->nt_headers->OptionalHeader.CheckSum);
 		printf("  *--Subsystem: %04X\n", database->nt_headers->OptionalHeader.Subsystem);
 		printf("  *--DllCharacteristics: %04X\n", database->nt_headers->OptionalHeader.DllCharacteristics);
-		printf("  *--SizeOfStackReserve: %lu\n", database->nt_headers->OptionalHeader.SizeOfStackReserve);
-		printf("  *--SizeOfStackCommit: %lu\n", database->nt_headers->OptionalHeader.SizeOfStackCommit);
-		printf("  *--SizeOfHeapReserve: %lu\n", database->nt_headers->OptionalHeader.SizeOfHeapReserve);
-		printf("  *--SizeOfHeapCommit: %lu\n", database->nt_headers->OptionalHeader.SizeOfHeapCommit);
+		printf("  *--SizeOfStackReserve: %llu\n", database->nt_headers->OptionalHeader.SizeOfStackReserve);
+		printf("  *--SizeOfStackCommit: %llu\n", database->nt_headers->OptionalHeader.SizeOfStackCommit);
+		printf("  *--SizeOfHeapReserve: %llu\n", database->nt_headers->OptionalHeader.SizeOfHeapReserve);
+		printf("  *--SizeOfHeapCommit: %llu\n", database->nt_headers->OptionalHeader.SizeOfHeapCommit);
 		printf("  *--LoaderFlags: %08X\n", database->nt_headers->OptionalHeader.LoaderFlags);
 		printf("  *--NumberOfRvaAndSizes: %08X\n\n", database->nt_headers->OptionalHeader.NumberOfRvaAndSizes);
 		printf("--< Data Directories >--\n");
-		for (size_t i = 0; i < 16; i++)
+		for (int i = 0; i < 16; i++)
 		{
-			printf("  *--Data Directory %ld\n", i);
+			printf("  *--Data Directory %d\n", i);
 			printf("     *--VirtualAddress: %08X\n", database->nt_headers->OptionalHeader.DataDirectory[i].VirtualAddress);
 			printf("     *--Size: %08X\n\n", database->nt_headers->OptionalHeader.DataDirectory[i].Size);
 		}
@@ -109,10 +108,10 @@ bool print_section_headers(PE_DATABASE* database)
 {
 	try
 	{
-		for (size_t i = 0; i < database->section_header.size(); i++)
+		for (int i = 0; i < database->section_header.size(); i++)
 		{
-			printf("--( SECTION HEADER %ld )--\n", i);
-			  printf("  *--Name: %s\n", database->section_header[i]->Name);
+			printf("--( SECTION HEADER %d )--\n", i);
+			printf("  *--Name: %s\n", database->section_header[i]->Name);
 			printf("  *--PhysicalAddress: %08X\n", database->section_header[i]->Misc.PhysicalAddress);
 			printf("  *--VirtualSize: %08X\n", database->section_header[i]->Misc.VirtualSize);
 			printf("  *--VirtualAddress: %08X\n", database->section_header[i]->VirtualAddress);
@@ -155,10 +154,10 @@ bool print_import_descriptors(PE_DATABASE* database, void* exe_base)
 			printf("  *--FirstThunk: %08X\n", importDesc.FirstThunk);
 			printf("  *--Functions:\n");
 
-			for (size_t j = 0; j < thunkCollection.size(); j++)
+			for (int j = 0; j < thunkCollection.size(); j++)
 			{
 
-				printf("     *--Function: %ld\n", j);
+				printf("     *--Function: %d\n", j);
 
 				auto& thunkData = thunkCollection[j].thunk_data64;
 				auto& importByName = thunkCollection[j].import_by_name;
@@ -166,7 +165,7 @@ bool print_import_descriptors(PE_DATABASE* database, void* exe_base)
 				if ((thunkData.u1.Function & 0x8000000000000000) == 0x8000000000000000) //Is Ordinal
 				{
 					auto thunk_ordinal = thunkData.u1.Ordinal & 0xFFFF;
-					printf("     *--Ordinal: %ld\n\n", thunk_ordinal);
+					printf("     *--Ordinal: %llu\n\n", thunk_ordinal);
 				}
 				else //Is Name
 				{
@@ -185,7 +184,6 @@ bool print_import_descriptors(PE_DATABASE* database, void* exe_base)
 	return true;
 }
 
-
 bool print_export_directory(PE_DATABASE* database, void* exe_base)
 {
 	try
@@ -201,8 +199,8 @@ bool print_export_directory(PE_DATABASE* database, void* exe_base)
 		printf("  *--MinorVersion: %04X\n", export_directory.MinorVersion);
 		printf("  *--Name: %s\n", (const char*)export_name_ptr);
 		printf("  *--Base: %08X\n", export_directory.Base);
-		printf("  *--NumberOfFunctions: %d\n", export_directory.NumberOfFunctions);
-		printf("  *--NumberOfNames: %d\n", export_directory.NumberOfNames);
+		printf("  *--NumberOfFunctions: %u\n", export_directory.NumberOfFunctions);
+		printf("  *--NumberOfNames: %u\n", export_directory.NumberOfNames);
 		printf("  *--AddressOfFunctions: %08X\n", export_directory.AddressOfFunctions);
 		printf("  *--AddressOfNames: %08X\n", export_directory.AddressOfNames);
 		printf("  *--AddressOfNameOrdinals: %08X\n\n", export_directory.AddressOfNameOrdinals);
@@ -216,7 +214,6 @@ bool print_export_directory(PE_DATABASE* database, void* exe_base)
 
 	return true;
 }
-
 
 bool print_export_functions(PE_DATABASE* database, void* exe_base)
 {
@@ -233,6 +230,37 @@ bool print_export_functions(PE_DATABASE* database, void* exe_base)
 			printf("  *--Function RVA: %08X\n", export_function_collection.FunctionRVA[i]);
 			printf("  *--Ordinal: %hu\n", export_function_collection.NameOrdinalRVA[i]);
 			printf("  *--Name RVA: %08X\n\n", export_function_collection.NameRVA[i]);
+		}
+	}
+	catch (const std::exception& error)
+	{
+		printf("%s\n", error.what());
+		return false;
+	}
+
+	return true;
+}
+
+bool print_delayed_import_descriptors(PE_DATABASE* database, void* exe_base)
+{
+	try
+	{
+		auto rva_offset = get_disk_rva_translation(database);
+		auto delayed_import_descriptors = database->delayed_imports_descriptor;
+
+		printf("--( DELAYED IMPORT DESCRIPTORS )--\n");
+		for (size_t i = 0; i < database->delayed_imports_descriptor.size(); i++)
+		{
+			auto delayed_import_dll_name_ptr = add_base_offset_rva(exe_base, delayed_import_descriptors[i]->DllNameRVA, rva_offset);
+			printf("  *--%s\n", (const char*)delayed_import_dll_name_ptr);
+			printf("  *--Attributes: %u\n", delayed_import_descriptors[i]->Attributes.AllAttributes);
+			printf("  *--BoundImportAddressTableRVA: %08X\n", delayed_import_descriptors[i]->BoundImportAddressTableRVA);
+			printf("  *--DllNameRVA: %08X\n", delayed_import_descriptors[i]->DllNameRVA);
+			printf("  *--ImportAddressTableRVA: %08X\n", delayed_import_descriptors[i]->ImportAddressTableRVA);
+			printf("  *--ImportNameTableRVA: %08X\n", delayed_import_descriptors[i]->ImportNameTableRVA);
+			printf("  *--ModuleHandleRVA: %08X\n", delayed_import_descriptors[i]->ModuleHandleRVA);
+			printf("  *--TimeDateStamp: %08X\n", delayed_import_descriptors[i]->TimeDateStamp);
+			printf("  *--UnloadInformationTableRVA: %08X\n\n", delayed_import_descriptors[i]->UnloadInformationTableRVA);
 		}
 	}
 	catch (const std::exception& error)

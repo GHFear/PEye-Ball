@@ -1,7 +1,7 @@
 #pragma once
 
 
-struct DOS_HEADER {      // DOS .EXE header
+struct DOS_HEADER {                         // DOS .EXE header
     uint16_t   e_magic;                     // Magic number
     uint16_t   e_cblp;                      // Bytes on last page of file
     uint16_t   e_cp;                        // Pages in file
@@ -77,7 +77,6 @@ struct NT_HEADERS64 {
     OPTIONAL_HEADER64 OptionalHeader;
 };
 
-
 struct SECTION_HEADER {
     uint8_t    Name[8];
     union {
@@ -98,7 +97,6 @@ struct IMPORT_BY_NAME {
     uint16_t    Hint;
     const char*   Name;
 };
-
 
 struct THUNK_DATA64 {
     union {
@@ -129,7 +127,6 @@ struct IMPORT_DESCRIPTOR {
     uint32_t   FirstThunk;                     // RVA to IAT (if bound this IAT has actual addresses)
 };
 
-
 struct EXPORT_COLLECTION {
     std::vector <uint32_t> FunctionRVA;
     std::vector <uint32_t> NameRVA;
@@ -150,7 +147,45 @@ struct EXPORT_DIRECTORY {
     uint32_t	AddressOfNameOrdinals;
 };
 
+struct BASE_RELOCATION
+{
+    uint32_t	VirtualAddress;
+    uint32_t	SizeOfBlock;
+    /* WORD	TypeOffset[1]; */
+};
 
+struct RELOCATION
+{
+    union {
+        uint32_t   VirtualAddress;
+        uint32_t   RelocCount;
+    } reloc_union;
+    uint32_t   SymbolTableIndex;
+    uint16_t    Type;
+};
+
+#define SIZEOF_RELOCATION 10
+
+struct DELAYLOAD_DESCRIPTOR
+{
+    union
+    {
+        uint32_t AllAttributes;
+        struct
+        {
+            uint32_t RvaBased : 1;
+            uint32_t ReservedAttributes : 31;
+        } delayed_union;
+    } Attributes;
+
+    uint32_t DllNameRVA;
+    uint32_t ModuleHandleRVA;
+    uint32_t ImportAddressTableRVA;
+    uint32_t ImportNameTableRVA;
+    uint32_t BoundImportAddressTableRVA;
+    uint32_t UnloadInformationTableRVA;
+    uint32_t TimeDateStamp;
+};
 
 struct PE_DATABASE {
     DOS_HEADER* dos_header = nullptr;
@@ -160,5 +195,5 @@ struct PE_DATABASE {
     std::vector<std::vector<Thunk_Collection64>> import_thunk_collection;
     EXPORT_DIRECTORY* export_directory = nullptr;
     EXPORT_COLLECTION export_thunk_collection;
-
+    std::vector<DELAYLOAD_DESCRIPTOR*> delayed_imports_descriptor;
 };

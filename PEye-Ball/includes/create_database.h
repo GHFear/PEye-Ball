@@ -71,7 +71,7 @@ auto create_imported_functions(PE_DATABASE* database, void* exe_base, int loop_i
 				if (!(first_thunk->u1.Function & 0x8000000000000000))
 				{
 					function_names->Name = static_cast<const char*>(function_name_address) + 2;
-					function_names->Hint = *(uint32_t*)static_cast<uint16_t*>(function_name_address);
+					function_names->Hint = *(uint16_t*)static_cast<uint16_t*>(function_name_address);
 				}
 				thunk_collection.import_by_name = *function_names;
 				thunk_collection_vector.push_back(thunk_collection);
@@ -113,11 +113,11 @@ bool create_import_descriptors(PE_DATABASE* database, void* exe_base)
 	try
 	{
 		auto rva_offset = get_disk_rva_translation(database);
-		size_t importDescriptorSize = database->nt_headers->OptionalHeader.DataDirectory[1].Size;
+		size_t importDescriptorSize = database->nt_headers->OptionalHeader.DataDirectory[1].Size - 20; // We remove 20 because the size is one too many blocks.
 		if (importDescriptorSize != 0) {
 			database->import_descriptor.reserve(importDescriptorSize / 20);
 
-			for (size_t i = 0; i * 20 < importDescriptorSize - 20; ++i) {
+			for (size_t i = 0; i * 20 < importDescriptorSize; ++i) {
 				database->import_descriptor.push_back((IMPORT_DESCRIPTOR*)add_base_offset_rva(
 					exe_base, database->nt_headers->OptionalHeader.DataDirectory[1].VirtualAddress + i * 20, rva_offset));
 			}
@@ -143,9 +143,9 @@ bool create_export_functions(PE_DATABASE* database, void* exe_base)
 
 		for (size_t i = 0; i < database->export_directory->NumberOfFunctions; i++)
 		{
-			database->export_thunk_collection.FunctionRVA.push_back(*(uint32_t*)add_base_offset_rva(exe_base, functions_address += 4, rva_offset));
-			database->export_thunk_collection.NameOrdinalRVA.push_back(*(uint16_t*)add_base_offset_rva(exe_base, name_ordinals_address += 2, rva_offset));
-			database->export_thunk_collection.NameRVA.push_back(*(uint32_t*)add_base_offset_rva(exe_base, names_address += 4, rva_offset));
+			database->export_thunk_collection.FunctionRVA.push_back(*(uint32_t*)add_base_offset_rva(exe_base, functions_address += sizeof(uint32_t), rva_offset));
+			database->export_thunk_collection.NameOrdinalRVA.push_back(*(uint16_t*)add_base_offset_rva(exe_base, name_ordinals_address += sizeof(uint16_t), rva_offset));
+			database->export_thunk_collection.NameRVA.push_back(*(uint32_t*)add_base_offset_rva(exe_base, names_address += sizeof(uint32_t), rva_offset));
 		}
 	}
 	catch (const std::exception& error)
@@ -175,5 +175,30 @@ bool create_export_directory(PE_DATABASE* database, void* exe_base)
 		return false;
 	}
 	
+	return true;
+};
+
+bool create_delayed_import_descriptors(PE_DATABASE* database, void* exe_base)
+{
+	try
+	{
+		auto rva_offset = get_disk_rva_translation(database);
+		size_t delayed_import_descriptors_Size = database->nt_headers->OptionalHeader.DataDirectory[13].Size - 32; // We remove 32 because the size is one too many blocks.
+		if (delayed_import_descriptors_Size != 0) {
+
+			for (size_t i = 0; i * 32 < delayed_import_descriptors_Size; i++)
+			{
+				
+				database->delayed_imports_descriptor.push_back((DELAYLOAD_DESCRIPTOR*)add_base_offset_rva(
+					exe_base, database->nt_headers->OptionalHeader.DataDirectory[13].VirtualAddress + i * 32, rva_offset));
+			}
+		}
+	}
+	catch (const std::exception& error)
+	{
+		printf("%s\n", error.what());
+		return false;
+	}
+
 	return true;
 };
