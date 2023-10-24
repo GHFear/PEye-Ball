@@ -3,6 +3,9 @@
 **PEye-Ball 0.1.0** <br>
 PE Parser for Windows and Linux.<br>
 
+**0.1.1 Changelog:** <br>
+-Made the parser use different threads for each header section we parse.<br>
+
 **0.1.0 Changelog:** <br>
 -Added support for parsing delayed load imports.<br>
 -Fixed print types and some wrong casts.<br>
