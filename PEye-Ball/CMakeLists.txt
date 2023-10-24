@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-project(PEye-Ball VERSION 1.0)
+project(PEye-Ball VERSION 0.1.1)
 include_directories(includes)
 add_executable(
 PEye-Ball
@@ -15,4 +15,5 @@ includes/print_tools.h
 includes/program_handlers.h
 includes/terminal_handler.h
 includes/tools.h
+includes/lambdas.h
 )

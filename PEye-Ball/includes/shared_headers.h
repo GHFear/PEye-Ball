@@ -9,6 +9,8 @@
 #elif _WIN64
 #include <Windows.h>
 #endif
+#include <thread>
+#include <chrono>
 #include <string>
 #include <iostream>
 #include <vector>
@@ -19,3 +21,4 @@
 #include "print_tools.h"
 #include "program_handlers.h"
 #include "create_database.h"
+#include "lambdas.h"

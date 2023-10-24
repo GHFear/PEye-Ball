@@ -1,9 +1,10 @@
+// Multithreaded PE Parser Project By GHFear.
 #include "includes/shared_headers.h"
 
 int main(int argc, char* argv[]) 
 {
 	//Intro
-	const char* gh_disasm_version = "0.1.0";
+	const char* gh_disasm_version = "0.1.1";
 	#ifdef __linux__
 	if (!print_intro(gh_disasm_version)) {
 		printf("Press any key to exit...\n");
@@ -21,26 +22,20 @@ int main(int argc, char* argv[])
 	auto file_path = path_to_load(argc, argv[1]);
 	auto loaded_exe = process_exe(file_path.c_str());
 
+	//Start timer (Only used for measuring performance.)
+	auto start = std::chrono::high_resolution_clock::now();
+
 	//Build Database
 	PE_DATABASE* database = new PE_DATABASE;
-	if (!create_dos_header(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
-	if (!create_nt_headers(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
-	if (!create_section_headers(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
-	if (!create_import_descriptors(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
-	if (!create_import_thunk_collections(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
-	if (!create_export_directory(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
-	if (!create_export_functions(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
-	if (!create_delayed_import_descriptors(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
 
-	//Print Database
-	if (!print_dos_header(database)) { clean_exit(loaded_exe.loadFile); }
-	if (!print_nt_headers(database)) { clean_exit(loaded_exe.loadFile); }
-	if (!print_section_headers(database)) { clean_exit(loaded_exe.loadFile); }
-	if (!print_import_descriptors(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
-	if (!print_export_directory(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
-	if (!print_export_functions(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
-	if (!print_delayed_import_descriptors(database, loaded_exe.exe_base)) { clean_exit(loaded_exe.loadFile); }
-
+	//Parse PE
+	start_pe_parser(database, loaded_exe.exe_base, loaded_exe.loadFile);
+	
+	//Stop timer (Only used for measuring performance.)
+	auto stop = std::chrono::high_resolution_clock::now();
+	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+	std::cout << "Time (in microseconds) to parse PE: " << duration.count() << std::endl;
+	
 	//Exit
 	clean_exit(loaded_exe.loadFile);
 	return 1;

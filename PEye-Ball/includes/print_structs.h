@@ -54,7 +54,7 @@ bool print_nt_headers(PE_DATABASE* database)
 		printf("  *--NumberOfSymbols: %08X\n", database->nt_headers->FileHeader.NumberOfSymbols);
 		printf("  *--SizeOfOptionalHeader: %04X\n", database->nt_headers->FileHeader.SizeOfOptionalHeader);
 		printf("  *--Characteristics: %04X\n\n", database->nt_headers->FileHeader.Characteristics);
-		printf("--< FILE HEADER >--\n");
+		printf("--< OPTIONAL HEADER64 >--\n");
 		printf("  *--Magic: %04X\n", database->nt_headers->OptionalHeader.Magic);
 		printf("  *--MajorLinkerVersion: %02X\n", database->nt_headers->OptionalHeader.MajorLinkerVersion);
 		printf("  *--MinorLinkerVersion: %02X\n", database->nt_headers->OptionalHeader.MinorLinkerVersion);

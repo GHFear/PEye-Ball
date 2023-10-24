@@ -1,28 +1,31 @@
 #pragma once
 
 
-bool create_dos_header(PE_DATABASE* database, void* exe_base)
+static bool create_dos_header(PE_DATABASE* database, void* exe_base) //Independent
 {
 	database->dos_header = (DOS_HEADER*)exe_base;
 	if (database->dos_header != nullptr) { return true; }
 	return false;
 };
 
-bool create_nt_headers(PE_DATABASE* database, void* exe_base)
+static bool create_nt_headers(PE_DATABASE* database, void* exe_base) //Independent
 {
-	database->nt_headers = (NT_HEADERS64*)add_base_offset(exe_base, database->dos_header->e_lfanew);
+	auto local_dos_header = (DOS_HEADER*)exe_base;
+	database->nt_headers = (NT_HEADERS64*)add_base_offset(exe_base, local_dos_header->e_lfanew);
 	if (database->nt_headers != nullptr) { return true; }
 	return false;
 };
 
-bool create_section_headers(PE_DATABASE* database, void* exe_base)
+static bool create_section_headers(PE_DATABASE* database, void* exe_base) //Independent
 {
 	try
 	{
+		auto local_dos_header = (DOS_HEADER*)exe_base;
+		auto local_nt_headers = (NT_HEADERS64*)add_base_offset(exe_base, local_dos_header->e_lfanew);
 		int section_block_counter = 0;
-		for (size_t i = 0; i < database->nt_headers->FileHeader.NumberOfSections; i++)
+		for (size_t i = 0; i < local_nt_headers->FileHeader.NumberOfSections; i++)
 		{
-			database->section_header.push_back((SECTION_HEADER*)add_base_offset(exe_base, database->dos_header->e_lfanew + sizeof(NT_HEADERS64) + section_block_counter));
+			database->section_header.push_back((SECTION_HEADER*)add_base_offset(exe_base, local_dos_header->e_lfanew + sizeof(NT_HEADERS64) + section_block_counter));
 			section_block_counter += sizeof(SECTION_HEADER);
 		}
 	}
@@ -35,7 +38,7 @@ bool create_section_headers(PE_DATABASE* database, void* exe_base)
 	return true;
 };
 
-auto create_imported_functions(PE_DATABASE* database, void* exe_base, int loop_index)
+static auto create_imported_functions(PE_DATABASE* database, void* exe_base, int loop_index)
 {
 	struct RESULT { bool boolean; std::vector<Thunk_Collection64> thunk_collection; };
 	std::vector<Thunk_Collection64> thunk_collection_vector;
@@ -90,7 +93,7 @@ auto create_imported_functions(PE_DATABASE* database, void* exe_base, int loop_i
 	return RESULT{ true, thunk_collection_vector };
 };
 
-bool create_import_thunk_collections(PE_DATABASE* database, void* exe_base)
+static bool create_import_thunk_collections(PE_DATABASE* database, void* exe_base)
 {
 	try
 	{
@@ -109,19 +112,22 @@ bool create_import_thunk_collections(PE_DATABASE* database, void* exe_base)
 	return true;
 };
 
-bool create_import_descriptors(PE_DATABASE* database, void* exe_base)
+static bool create_import_descriptors(PE_DATABASE* database, void* exe_base) //Independent
 {
 	try
 	{
 		auto rva_offset = get_disk_rva_translation(database);
-		size_t importDescriptorSize = database->nt_headers->OptionalHeader.DataDirectory[1].Size - 20; // We remove 20 because the size is one too many blocks.
+		auto local_dos_header = (DOS_HEADER*)exe_base;
+		auto local_nt_headers = (NT_HEADERS64*)add_base_offset(exe_base, local_dos_header->e_lfanew);
+		size_t importDescriptorSize = local_nt_headers->OptionalHeader.DataDirectory[1].Size - 20; // We remove 20 because the size is one too many blocks.
 		if (importDescriptorSize != 0) {
 			database->import_descriptor.reserve(importDescriptorSize / 20);
 
 			for (size_t i = 0; i * 20 < importDescriptorSize; ++i) {
 				database->import_descriptor.push_back((IMPORT_DESCRIPTOR*)add_base_offset_rva(
-					exe_base, database->nt_headers->OptionalHeader.DataDirectory[1].VirtualAddress + i * 20, rva_offset));
+					exe_base, local_nt_headers->OptionalHeader.DataDirectory[1].VirtualAddress + i * 20, rva_offset));
 			}
+			create_import_thunk_collections(database, exe_base);
 		}
 	}
 	catch (const std::exception& error)
@@ -133,7 +139,7 @@ bool create_import_descriptors(PE_DATABASE* database, void* exe_base)
 	return true;
 };
 
-bool create_export_functions(PE_DATABASE* database, void* exe_base)
+static bool create_export_functions(PE_DATABASE* database, void* exe_base) 
 {
 	try
 	{
@@ -158,16 +164,19 @@ bool create_export_functions(PE_DATABASE* database, void* exe_base)
 	return true;
 };
 
-bool create_export_directory(PE_DATABASE* database, void* exe_base)
+static bool create_export_directory(PE_DATABASE* database, void* exe_base) //Independent
 {
 	try
 	{
 		auto rva_offset = get_disk_rva_translation(database);
-		size_t export_directories_Size = database->nt_headers->OptionalHeader.DataDirectory[0].Size;
+		auto local_dos_header = (DOS_HEADER*)exe_base;
+		auto local_nt_headers = (NT_HEADERS64*)add_base_offset(exe_base, local_dos_header->e_lfanew);
+		size_t export_directories_Size = local_nt_headers->OptionalHeader.DataDirectory[0].Size;
 
 		if (export_directories_Size != 0) {
 			database->export_directory = ((EXPORT_DIRECTORY*)add_base_offset_rva(
-				exe_base, database->nt_headers->OptionalHeader.DataDirectory[0].VirtualAddress, rva_offset));
+				exe_base, local_nt_headers->OptionalHeader.DataDirectory[0].VirtualAddress, rva_offset));
+			create_export_functions(database, exe_base);
 		}
 	}
 	catch (const std::exception& error)
@@ -179,19 +188,21 @@ bool create_export_directory(PE_DATABASE* database, void* exe_base)
 	return true;
 };
 
-bool create_delayed_import_descriptors(PE_DATABASE* database, void* exe_base)
+static bool create_delayed_import_descriptors(PE_DATABASE* database, void* exe_base) //Independent
 {
 	try
 	{
 		auto rva_offset = get_disk_rva_translation(database);
-		size_t delayed_import_descriptors_Size = database->nt_headers->OptionalHeader.DataDirectory[13].Size - 32; // We remove 32 because the size is one too many blocks.
+		auto local_dos_header = (DOS_HEADER*)exe_base;
+		auto local_nt_headers = (NT_HEADERS64*)add_base_offset(exe_base, local_dos_header->e_lfanew);
+		size_t delayed_import_descriptors_Size = local_nt_headers->OptionalHeader.DataDirectory[13].Size - 32; // We remove 32 because the size is one too many blocks.
 		if (delayed_import_descriptors_Size != 0) {
 
 			for (size_t i = 0; i * 32 < delayed_import_descriptors_Size; i++)
 			{
 				
 				database->delayed_imports_descriptor.push_back((DELAYLOAD_DESCRIPTOR*)add_base_offset_rva(
-					exe_base, database->nt_headers->OptionalHeader.DataDirectory[13].VirtualAddress + i * 32, rva_offset));
+					exe_base, local_nt_headers->OptionalHeader.DataDirectory[13].VirtualAddress + i * 32, rva_offset));
 			}
 		}
 	}
