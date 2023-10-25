@@ -149,9 +149,9 @@ struct EXPORT_DIRECTORY {
 
 struct BASE_RELOCATION
 {
-    uint32_t	VirtualAddress;
-    uint32_t	SizeOfBlock;
-    /* WORD	TypeOffset[1]; */
+    uint32_t	            VirtualAddress;
+    uint32_t	            SizeOfBlock;
+    std::vector<WORD>	    TypeOffset;
 };
 
 struct RELOCATION
@@ -196,4 +196,5 @@ struct PE_DATABASE {
     EXPORT_DIRECTORY* export_directory = nullptr;
     EXPORT_COLLECTION export_thunk_collection;
     std::vector<DELAYLOAD_DESCRIPTOR*> delayed_imports_descriptor;
+    std::vector<BASE_RELOCATION*> base_relocations;
 };

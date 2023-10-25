@@ -28,6 +28,10 @@ bool start_pe_parser(PE_DATABASE* database, void* exe_base, int loadFile)
 		if (!create_delayed_import_descriptors(database, exe_base)) { clean_exit(loadFile); }
 		};
 
+	auto base_relocations_lambda = [](PE_DATABASE* database, void* exe_base, int loadFile) {
+		if (!create_page_relocations(database, exe_base)) { clean_exit(loadFile); }
+		};
+
 	auto print_lambda = [](PE_DATABASE* database, void* exe_base, int loadFile) {
 		if (!print_dos_header(database)) { clean_exit(loadFile); }
 		if (!print_nt_headers(database)) { clean_exit(loadFile); }
@@ -36,6 +40,7 @@ bool start_pe_parser(PE_DATABASE* database, void* exe_base, int loadFile)
 		if (!print_export_directory(database, exe_base)) { clean_exit(loadFile); }
 		if (!print_export_functions(database, exe_base)) { clean_exit(loadFile); }
 		if (!print_delayed_import_descriptors(database, exe_base)) { clean_exit(loadFile); }
+		if (!print_base_relocations(database, exe_base)) { clean_exit(loadFile); }
 		};
 
 	//Build DOS -> Sections
@@ -50,9 +55,11 @@ bool start_pe_parser(PE_DATABASE* database, void* exe_base, int loadFile)
 	std::thread import_thread(import_lambda, database, exe_base, loadFile);
 	std::thread export_thread(export_lambda, database, exe_base, loadFile);
 	std::thread delayed_import_thread(delayed_import_lambda, database, exe_base, loadFile);
+	std::thread base_relocations_thread(base_relocations_lambda, database, exe_base, loadFile);
 	import_thread.join();
 	export_thread.join();
 	delayed_import_thread.join();
+	base_relocations_thread.join();
 
 	//Print Database
 	std::thread print_thread(print_lambda, database, exe_base, loadFile);
@@ -90,6 +97,10 @@ bool start_pe_parser(PE_DATABASE* database, void* exe_base, HANDLE loadFile)
 		if (!create_delayed_import_descriptors(database, exe_base)) { clean_exit(loadFile); }
 		};
 
+	auto base_relocations_lambda = [](PE_DATABASE* database, void* exe_base, HANDLE loadFile) { 
+		if (!create_page_relocations(database, exe_base)) { clean_exit(loadFile); }
+		};
+
 	auto print_lambda = [](PE_DATABASE* database, void* exe_base, HANDLE loadFile) {
 		if (!print_dos_header(database)) { clean_exit(loadFile); }
 		if (!print_nt_headers(database)) { clean_exit(loadFile); }
@@ -98,6 +109,7 @@ bool start_pe_parser(PE_DATABASE* database, void* exe_base, HANDLE loadFile)
 		if (!print_export_directory(database, exe_base)) { clean_exit(loadFile); }
 		if (!print_export_functions(database, exe_base)) { clean_exit(loadFile); }
 		if (!print_delayed_import_descriptors(database, exe_base)) { clean_exit(loadFile); }
+		if (!print_base_relocations(database, exe_base)) { clean_exit(loadFile); }
 		};
 
 
@@ -113,9 +125,11 @@ bool start_pe_parser(PE_DATABASE* database, void* exe_base, HANDLE loadFile)
 	std::thread import_thread(import_lambda, database, exe_base, loadFile);
 	std::thread export_thread(export_lambda, database, exe_base, loadFile);
 	std::thread delayed_import_thread(delayed_import_lambda, database, exe_base, loadFile);
+	std::thread base_relocations_thread(base_relocations_lambda, database, exe_base, loadFile);
 	import_thread.join();
 	export_thread.join();
 	delayed_import_thread.join();
+	base_relocations_thread.join();
 
 	//Print Database
 	std::thread print_thread(print_lambda, database, exe_base, loadFile);

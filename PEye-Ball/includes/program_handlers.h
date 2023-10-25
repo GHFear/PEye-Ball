@@ -5,13 +5,13 @@ bool IsExe(const std::string& fileName)
     return fileName.size() >= 4 && fileName.compare(fileName.size() - 3, 3, "exe") == 0;
 }
 
-std::wstring GetNameWithoutExtensionFromFullPath(std::wstring full_path)
+std::string GetNameWithoutExtensionFromFullPath(std::string full_path)
 {
-	size_t last_slash_idx = full_path.find_last_of(L"\\/");
-	size_t period_idx = full_path.rfind(L".");
+	size_t last_slash_idx = full_path.find_last_of("\\/");
+	size_t period_idx = full_path.rfind(".");
 
 
-	if (last_slash_idx != std::wstring::npos && period_idx > last_slash_idx) {
+	if (last_slash_idx != std::string::npos && period_idx > last_slash_idx) {
 		return full_path.substr(last_slash_idx + 1, period_idx - last_slash_idx - 1);
 	}
 

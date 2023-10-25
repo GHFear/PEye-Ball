@@ -13,8 +13,12 @@
 #include <chrono>
 #include <string>
 #include <iostream>
+#include <cstdio>
+#include <fstream>
 #include <vector>
 #include <map>
+// Redirect C output (fprintf) to a file
+FILE* cFile = nullptr;
 #include "pe_structs.h"
 #include "tools.h"
 #include "print_structs.h"
