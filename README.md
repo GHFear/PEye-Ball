@@ -3,11 +3,6 @@
 **PEye-Ball 0.1.2** <br>
 PE Parser for Windows and Linux.<br>
 
-**0.1.2 Changelog:** <br>
--Added support for parsing base relocations.<br>
--Fixed some bugs.<br>
--Now printing to file instead of console.<br>
-
 **PEye-Ball Supports:** <br>
 -Dos Header<br>
 -NT Headers<br>
@@ -17,15 +12,21 @@ PE Parser for Windows and Linux.<br>
 -Delayed Imports<br>
 -Base Relocations<br>
 
-
 Build project with cmake 3.10 and above from (build) directory with terminal commands:<br>
 **"cmake ../"**    -- To create cmake project files.<br>
 **"make"**         -- To build executable.<br>
 
 Will add more features to this project in the future.<br>
 
-**Earlier updates:**
+/GHFear.
+
+**Updates:**
 ----------------------------------------------------------------------------
+**0.1.2 Changelog:** <br>
+-Added support for parsing base relocations.<br>
+-Fixed some bugs.<br>
+-Now printing to file instead of console.<br>
+
 **0.1.1 Changelog:** <br>
 -Made the parser use different threads for each header section we parse.<br>
 
@@ -35,5 +36,3 @@ Will add more features to this project in the future.<br>
 
 **0.0.9 Changelog:** <br>
 -Added support for parsing exports.
-
-By GHFear.
