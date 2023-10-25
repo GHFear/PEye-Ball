@@ -23,6 +23,8 @@ Build project with cmake 3.10 and above from (build) directory with terminal com
 
 Will add more features to this project in the future.<br>
 
+**Earlier updates:**
+----------------------------------------------------------------------------
 **0.1.1 Changelog:** <br>
 -Made the parser use different threads for each header section we parse.<br>
 
