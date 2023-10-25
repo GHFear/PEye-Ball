@@ -15,6 +15,7 @@ PE Parser for Windows and Linux.<br>
 -Imports<br>
 -Exports<br>
 -Delayed Imports<br>
+-Base Relocations<br>
 
 
 Build project with cmake 3.10 and above from (build) directory with terminal commands:<br>
