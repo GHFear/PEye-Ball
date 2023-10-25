@@ -1,7 +1,12 @@
 # PEye-Ball
 
-**PEye-Ball 0.1.0** <br>
+**PEye-Ball 0.1.2** <br>
 PE Parser for Windows and Linux.<br>
+
+**0.1.2 Changelog:** <br>
+-Added support for parsing base relocations.<br>
+-Fixed some bugs.<br>
+-Now printing to file instead of console.<br>
 
 **0.1.1 Changelog:** <br>
 -Made the parser use different threads for each header section we parse.<br>
