@@ -151,7 +151,7 @@ struct BASE_RELOCATION
 {
     uint32_t	            VirtualAddress;
     uint32_t	            SizeOfBlock;
-    std::vector<WORD>	    TypeOffset;
+    std::vector<uint16_t>	    TypeOffset;
 };
 
 struct RELOCATION
